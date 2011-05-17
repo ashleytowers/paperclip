@@ -11,17 +11,23 @@ Add the following to your gemfile:
 Then run bundle install
 
 1) Assuming you are using Papertrail:
+
   a) Add a Paperclip.interpolates to an initializer so your images can be stored under directories for each version (I used config/initializers/paperclip.rb)
+      
       e.g. (my model has a version_no attribute so I use that)
-      Paperclip.interpolates :version do |attachment, style|
+     
+    Paperclip.interpolates :version do |attachment, style|
         attachment.instance.version_no
-      end
+    end
+      
   b) Change your has_attached_file call to include the version number and to tell paperclip to not destroy your old files:
+      
       e.g.
-      has_attached_file :image, :styles => { :small => "150x150>", :medium => "400x400>" },
+      
+    has_attached_file :image, :styles => { :small => "150x150>", :medium => "400x400>" },
         :url => "/assets/products/:id/:version/:style/:basename.:extension",  
         :path => ":rails_root/public/assets/products/:id/:version/:style/:basename.:extension",
-        :keep_old_files => true
+        :keep_old_files => true`
         
   c) Restart your server to pick up the changes. 
   
