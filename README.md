@@ -1,3 +1,35 @@
+This fork provides an option to stop paperclip deleting old files.
+
+Use Case: When working with a versioned model (in my case using Papertrail) I don't 
+want the old versions to be deleted when I do an update.
+
+How to use:
+
+Add the following to your gemfile:
+  gem 'paperclip', :git => 'git://github.com/ashleytowers/paperclip'
+
+Then run bundle install
+
+1) Assuming you are using Papertrail:
+  a) Add a Paperclip.interpolates to an initializer so your images can be stored under directories for each version (I used config/initializers/paperclip.rb)
+      e.g. (my model has a version_no attribute so I use that)
+      Paperclip.interpolates :version do |attachment, style|
+        attachment.instance.version_no
+      end
+  b) Change your has_attached_file call to include the version number and to tell paperclip to not destroy your old files:
+      e.g.
+      has_attached_file :image, :styles => { :small => "150x150>", :medium => "400x400>" },
+        :url => "/assets/products/:id/:version/:style/:basename.:extension",  
+        :path => ":rails_root/public/assets/products/:id/:version/:style/:basename.:extension",
+        :keep_old_files => true
+        
+  c) Restart your server to pick up the changes. 
+  
+This should now leave the old files in place when you do an update, and because the 
+images have a versioned path, when you reify an old version of your model the version 
+will still be pointing to the correct version of the file.
+
+
 Paperclip
 =========
 
