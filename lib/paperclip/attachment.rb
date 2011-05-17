@@ -359,9 +359,11 @@ module Paperclip
 
     def queue_existing_for_delete #:nodoc:
       return unless file?
-      @queued_for_delete += [:original, *styles.keys].uniq.map do |style|
-        path(style) if exists?(style)
-      end.compact
+      unless @options[:keep_old_files]
+        @queued_for_delete += [:original, *styles.keys].uniq.map do |style|
+          path(style) if exists?(style)
+        end.compact
+      end
       instance_write(:file_name, nil)
       instance_write(:content_type, nil)
       instance_write(:file_size, nil)
